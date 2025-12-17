@@ -158,11 +158,33 @@ public class Main {
     }
 
     private void updateAccountPassword(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("user_id:");
+        int userId = Integer.parseInt(scanner.nextLine().trim());
 
+        System.out.println("new password:");
+        String newPassword = scanner.nextLine().trim();
+
+        try (var ps = connection.prepareStatement(
+                "UPDATE account SET password = ? WHERE user_id = ?")) {
+            ps.setString(1, newPassword);
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+
+        System.out.println("password updated");
     }
 
     private void deleteAccount(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("user_id:");
+        int userId = Integer.parseInt(scanner.nextLine().trim());
 
+        try (var ps = connection.prepareStatement(
+                "DELETE FROM account WHERE user_id = ?")) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
+
+        System.out.println("account deleted");
     }
 
 
