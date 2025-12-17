@@ -94,15 +94,67 @@ public class Main {
     }
 
     private void getMissionById(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("mission_id:");
+        int missionId = Integer.parseInt(scanner.nextLine().trim());
 
+        try (var ps = connection.prepareStatement(
+                "SELECT mission_id, spacecraft, launch_date FROM moon_mission WHERE mission_id = ?")) {
+            ps.setInt(1, missionId);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int year = rs.getDate("launch_date").toLocalDate().getYear();
+                    System.out.println(rs.getInt("mission_id") + " " +
+                            rs.getString("spacecraft") + " " + year);
+                } else {
+                    System.out.println("Mission not found.");
+                }
+            }
+        }
     }
 
     private void countMissionsByYear(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("year:");
+        int year = Integer.parseInt(scanner.nextLine().trim());
 
+        System.out.println(year);
+
+        try (var ps = connection.prepareStatement(
+                "SELECT COUNT(*) FROM moon_mission WHERE YEAR(launch_date) = ?")) {
+            ps.setInt(1, year);
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    System.out.println(rs.getInt(1));
+                }
+            }
+        }
     }
 
     private void createAccount(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("first name:");
+        String firstName = scanner.nextLine().trim();
 
+        System.out.println("last name:");
+        String lastName = scanner.nextLine().trim();
+
+        System.out.println("ssn:");
+        String ssn = scanner.nextLine().trim();
+
+        System.out.println("password:");
+        String password = scanner.nextLine().trim();
+
+        String username = firstName.substring(0, 3) + lastName.substring(0, 3);
+
+        try (var ps = connection.prepareStatement(
+                "INSERT INTO account (first_name, last_name, ssn, password, name) VALUES (?, ?, ?, ?, ?)")) {
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ps.setString(3, ssn);
+            ps.setString(4, password);
+            ps.setString(5, username);
+            ps.executeUpdate();
+        }
+
+        System.out.println("account created");
     }
 
     private void updateAccountPassword(Connection connection, Scanner scanner) throws SQLException {
